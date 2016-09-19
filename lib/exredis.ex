@@ -144,7 +144,10 @@ defmodule Exredis do
   documentation](http://redis.io/commands).
   """
   @spec query(pid, list, Integer) :: any
-  def query(client, command, timeout) when is_pid(client) and is_list(command) and is_integer(timeout), do:
+  def query(client, command, timeout)
+      when is_pid(client) and
+          is_list(command) and
+          (is_integer(timeout) or timeout == :infinity), do:
     client |> :eredis.q(command, timeout) |> elem(1)
 
   @doc """
@@ -159,11 +162,14 @@ defmodule Exredis do
     client |> :eredis.qp(command) |> Enum.map(&elem(&1, 1))
 
   @doc """
-  Performs a pipeline query with specified timeout, executing the list of commands 
+  Performs a pipeline query with specified timeout, executing the list of commands
 
       query_pipe(client, [["SET", :a, "1"], ["LPUSH", :b, "3"]], 10)
   """
   @spec query_pipe(pid, [list], float) :: any
-  def query_pipe(client, command, timeout) when (is_pid(client) or is_atom(client)) and is_list(command) and is_integer(timeout), do:
+  def query_pipe(client, command, timeout)
+      when (is_pid(client) or is_atom(client)) and
+          is_list(command) and
+          (is_integer(timeout) or timeout == :infinity), do:
     client |> :eredis.qp(command, timeout) |> Enum.map(&elem(&1, 1))
 end
